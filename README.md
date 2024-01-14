@@ -48,4 +48,3 @@ To use `cgit`, follow these steps:
     ```
 
 4. After installation, `cgit` should be available in a new terminal session.
-
