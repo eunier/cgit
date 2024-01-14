@@ -11,7 +11,7 @@ dirs = "5.0.1"
 regex = "1.10.2"
 
 [package.metadata.scripts]
-install = "cargo build --package cgit --release && sudo cp "
+install = "cargo build --package cgit --release && sudo cp ../target/release/cgit /usr/local/bin"
 
 [[bin]]
 name = "cgit"

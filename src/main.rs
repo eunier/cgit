@@ -18,7 +18,6 @@ fn run_git_command(repo_info_option: Option<RepoInfo>) {
 	match (repo_info_option, dirs::home_dir()) {
 		(Some(repo), Some(home_dir)) => {
 			let home_dir_str = home_dir.to_string_lossy();
-			// Command to execute: echo Hello, Rust!
 			let full_path = format!("{}/Projects/{}", home_dir_str, repo.path);
 
 			let command = Command::new("git")
@@ -27,10 +26,8 @@ fn run_git_command(repo_info_option: Option<RepoInfo>) {
 				.arg(full_path)
 				.spawn();
 
-			// Check if the command was executed successfully
 			match command {
 				Ok(mut child) => {
-					// Wait for the command to finish and get the result
 					let status =
 						child.wait().expect("Failed to wait for command");
 
