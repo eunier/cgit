@@ -40,6 +40,36 @@ fn process_args_matches(matches: ArgMatches) {
 				println!("res: {}", full_path);
 			}
 		}
+
+		if remote.starts_with("https") {
+			let ssh_remote_regex = Regex::new(
+				r"^https://([a-zA-Z0-9.-]+)/([a-zA-Z0-9_/-]+)/([a-zA-Z0-9_.-]+)\.git$",
+			)
+			.unwrap();
+
+			if ssh_remote_regex.is_match(remote) {
+				let captures = ssh_remote_regex.captures(remote).unwrap();
+				let hostname = captures.get(1).unwrap().as_str();
+				let username = captures.get(2).unwrap().as_str();
+				let repo = captures.get(3).unwrap().as_str();
+
+				let hostname_parts: Vec<&str> = hostname.split('.').collect();
+				let hostname_parts_reversed: Vec<&str> =
+					hostname_parts.into_iter().rev().collect();
+				let hostname_reversed: String =
+					hostname_parts_reversed.join(".");
+
+				let project_folder_name = repo.replace('-', "_");
+
+				let root_folder_name =
+					format!("{}.{}.{}", hostname_reversed, username, repo);
+
+				let full_path =
+					format!("{}/{}", root_folder_name, project_folder_name);
+
+				println!("res: {}", full_path);
+			}
+		}
 	}
 }
 
