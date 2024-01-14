@@ -1,15 +1,57 @@
-use std::fmt::format;
-
 use clap::{command, Arg, ArgMatches};
 use regex::Regex;
+use std::process::Command;
+
+struct RepoInfo {
+	remote: String,
+	path: String,
+}
 
 fn main() {
 	let remote_arg = Arg::new("remote");
 	let matches = command!().arg(remote_arg).get_matches();
-	process_args_matches(matches);
+	let git_command = get_project_path(matches);
+	run_git_command(git_command);
 }
 
-fn process_args_matches(matches: ArgMatches) {
+fn run_git_command(repo_info_option: Option<RepoInfo>) {
+	match (repo_info_option, dirs::home_dir()) {
+		(Some(repo), Some(home_dir)) => {
+			let home_dir_str = home_dir.to_string_lossy();
+			// Command to execute: echo Hello, Rust!
+			let full_path = format!("{}/Projects/{}", home_dir_str, repo.path);
+
+			let command = Command::new("git")
+				.arg("clone")
+				.arg(repo.remote)
+				.arg(full_path)
+				.spawn();
+
+			// Check if the command was executed successfully
+			match command {
+				Ok(mut child) => {
+					// Wait for the command to finish and get the result
+					let status =
+						child.wait().expect("Failed to wait for command");
+
+					if status.success() {
+						println!("Command executed successfully");
+					} else {
+						println!("Command failed with exit code: {}", status);
+					}
+				}
+				Err(err) => {
+					eprintln!("Failed to execute command: {}", err);
+				}
+			}
+		}
+		_ => {
+			println!("Got None");
+		}
+	}
+}
+
+fn get_project_path(matches: ArgMatches) -> Option<RepoInfo> {
 	if let Some(remote) = matches.get_one::<String>("remote") {
 		if remote.starts_with("git") {
 			let ssh_remote_regex = Regex::new(
@@ -37,7 +79,10 @@ fn process_args_matches(matches: ArgMatches) {
 				let full_path =
 					format!("{}/{}", root_folder_name, project_folder_name);
 
-				println!("res: {}", full_path);
+				return Some(RepoInfo {
+					path: full_path,
+					remote: remote.to_string(),
+				});
 			}
 		}
 
@@ -67,18 +112,13 @@ fn process_args_matches(matches: ArgMatches) {
 				let full_path =
 					format!("{}/{}", root_folder_name, project_folder_name);
 
-				println!("res: {}", full_path);
+				return Some(RepoInfo {
+					path: full_path,
+					remote: remote.to_string(),
+				});
 			}
 		}
 	}
+
+	None
 }
-
-// #[cfg(test)]
-// mod tests {
-// 	use super::*;
-
-// 	#[test]
-// 	fn test_process_args_matches() {
-// 		process_args_matches()
-// 	}
-// }
