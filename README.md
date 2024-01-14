@@ -4,13 +4,13 @@
 
 ## Usage
 
-Assuming you have a repository at `https://gitsite.com/username/repo-name.git`, you can use cgit as follows:
+Assuming you have a repository at `https://gitsite.com/username/repo-name.git`, you can use `cgit` as follows:
 
 ```bash
 cgit https://gitsite.com/username/repo-name.git
 ```
 
-The format of the above command is:
+This command is equivalent to:
 
 ```bash
 git \
