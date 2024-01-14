@@ -29,7 +29,7 @@ fn process_args_matches(matches: ArgMatches) {
 				let hostname_reversed: String =
 					hostname_parts_reversed.join(".");
 
-				let project_folder_name = repo.replace("-", "_");
+				let project_folder_name = repo.replace('-', "_");
 
 				let root_folder_name =
 					format!("{}.{}.{}", hostname_reversed, username, repo);
